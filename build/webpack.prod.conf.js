@@ -67,40 +67,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       name: ['vendor'],
       minChunks: 2
     }),
-    // https://github.com/ampedandwired/html-webpack-plugin
-    new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: 'index.html',
-      removeComments: true,
-      inject: true,
-      chunks: ['vendor','app'],
-      chunksSortMode: function(a, b) {
-        var order = ["vendor", "app"];
-        return order.indexOf(a.names[0]) - order.indexOf(b.names[0]);
-      }
-    }),
-    new HtmlWebpackPlugin({
-      filename: 'register.html',
-      template: 'register.html',
-      removeComments: true,
-      inject: true,     
-      chunks: ['vendor','register','app'], 
-      chunksSortMode: function(a, b) {
-        var order = ["vendor", "register", "app"];
-        return order.indexOf(a.names[0]) - order.indexOf(b.names[0]);
-      }
-    }),
-    new HtmlWebpackPlugin({
-      filename: 'library.html',
-      template: 'library.html',
-      removeComments: true,
-      inject: true,     
-      chunks: ['vendor','library','app'], 
-      chunksSortMode: function(a, b) {
-        var order = ["vendor", "library", "app"];
-        return order.indexOf(a.names[0]) - order.indexOf(b.names[0]);
-      }
-    }),
+    // https://github.com/ampedandwired/html-webpack-plugin    
     // copy custom static assets
     new CopyWebpackPlugin([
       {

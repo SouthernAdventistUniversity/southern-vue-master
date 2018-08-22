@@ -7,6 +7,9 @@ const path = require('path')
 const baseWebpackConfig = require('./webpack.base.conf')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+
 // const CommonsChunkPlugin = require('commonchunk-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
@@ -16,8 +19,17 @@ const PORT = process.env.PORT && Number(process.env.PORT)
 
 const devWebpackConfig = merge(baseWebpackConfig, {
   module: {
-    rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap, usePostCSS: true })
+    rules: utils.styleLoaders({        
+      extract: true,
+      usePostCSS: true
+    })
   },
+  // module: {
+  //   rules: [{
+  //     test: /\.scss$/,
+  //     loader: 'style!css!resolve-url!sass?sourceMap'
+  //   }]
+  // },  
   // cheap-module-eval-source-map is faster for development
   devtool: config.dev.devtool,
 
@@ -45,44 +57,32 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     new webpack.DefinePlugin({
       'process.env': require('../config/dev.env')
     }),
+    new ExtractTextPlugin({ // define where to save the file
+      filename: 'dist/[name].bundle.css',
+      allChunks: true,
+    }),
+    // new ExtractTextPlugin({
+    //   //filename: 'styles.css',
+    //   // Setting the following option to `false` will not extract CSS from codesplit chunks.
+    //   // Their CSS will instead be inserted dynamically with style-loader when the codesplit chunk has been loaded by webpack.
+    //   // It's currently set to `true` because we are seeing that sourcemaps are included in the codesplit bundle as well when it's `false`, 
+    //   // increasing file size: https://github.com/vuejs-templates/webpack/issues/1110
+    //   allChunks: true,
+    // }),
+    // Compress extracted CSS. We are using this plugin so that possible
+    // duplicated CSS from different components can be deduped.
+    new OptimizeCSSPlugin({
+      cssProcessorOptions: config.build.productionSourceMap
+        ? { safe: true, map: { inline: false } }
+        : { safe: true }
+    }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(), // HMR shows correct file names in console on update.
     new webpack.NoEmitOnErrorsPlugin(),    
     new webpack.optimize.CommonsChunkPlugin({
       name: ['vendor'],
       minChunks: 2
-    }),
-    // https://github.com/ampedandwired/html-webpack-plugin
-    new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: 'index.html',
-      inject: true,
-      chunks: ['vendor','app'],
-      chunksSortMode: function(a, b) {
-        var order = ["vendor", "app"];
-        return order.indexOf(a.names[0]) - order.indexOf(b.names[0]);
-      }
-    }),
-    new HtmlWebpackPlugin({
-      filename: 'register.html',
-      template: 'register.html',
-      inject: true,     
-      chunks: ['vendor','register','app'], 
-      chunksSortMode: function(a, b) {
-        var order = ["vendor", "register", "app"];
-        return order.indexOf(a.names[0]) - order.indexOf(b.names[0]);
-      }
-    }),
-    new HtmlWebpackPlugin({
-      filename: 'library.html',
-      template: 'library.html',
-      inject: true,     
-      chunks: ['vendor','library','app'], 
-      chunksSortMode: function(a, b) {
-        var order = ["vendor", "library", "app"];
-        return order.indexOf(a.names[0]) - order.indexOf(b.names[0]);
-      }
-    }),
+    }),        
     // copy custom static assets
     new CopyWebpackPlugin([
       {
