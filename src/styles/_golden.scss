@@ -1,0 +1,14 @@
+// http://gld.chadlindemann.com/
+
+$golden:	1.618;
+$basevw:	100%;
+$gld10:	$basevw / $golden;
+$gld9:	$basevw - $gld10;
+$gld8:	$gld9 / $golden;
+$gld7:	$gld9 - $gld8;
+$gld6:	$gld7 / $golden;
+$gld5:	$gld7 - $gld6;
+$gld4:	$gld5 / $golden;
+$gld3:	$gld5 - $gld4;
+$gld2:	$gld3 / $golden;
+$gld1:	$gld3 - $gld2;

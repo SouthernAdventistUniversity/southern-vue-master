@@ -5,7 +5,7 @@ import UIkit from 'uikit';
 import Icons from 'uikit/dist/js/uikit-icons';
 import './components/globals/_globals';
 
-require('./styles/site.scss');
+import('./styles/site.scss');
 
 Vue.config.productionTip = false;
 
