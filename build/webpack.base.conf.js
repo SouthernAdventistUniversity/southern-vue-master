@@ -2,13 +2,28 @@
 const path = require('path')
 const utils = require('./utils')
 const config = require('../config')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { VueLoaderPlugin } = require('vue-loader');
 const vueLoaderConfig = require('./vue-loader.conf')
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
+
+function recursiveIssuer(m) {
+  if (m.issuer) {
+    return recursiveIssuer(m.issuer);
+  } else if (m.name) {
+    return m.name;
+  } else {
+    return false;
+  }
+}
+
 
 const createLintingRule = () => ({
   test: /\.(js|vue)$/,
@@ -24,8 +39,8 @@ const createLintingRule = () => ({
 module.exports = {
   context: path.resolve(__dirname, '../'),
   entry: {
-    vendor: ['vue', 'uikit'],
-    app: './src/main.js',
+    sauBase: ['vue', 'uikit'],
+    sauApp: './src/main.js',    
     register: './src/register.js',    
     library: './src/library.js',   
     celebrates: './src/celebrates.js',
@@ -44,40 +59,107 @@ module.exports = {
       '@': resolve('src'),
     }
   },
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+        cache: true,
+        parallel: true,
+        sourceMap: true // set to true if you want JS source maps
+      }),
+      new OptimizeCSSAssetsPlugin({})
+    ],  
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          test: "/[\\/]node_modules[\\/]/",
+          name: "vendor",
+          chunks: "initial",
+        },
+        // sauBaseStyles: {
+        //   test: (m,c,entry = 'sauBase') => m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
+        //   name: "sauBase",
+        //   chunks: "initial",
+        // },
+        // sauAppStyles: {
+        //   test: (m,c,entry = 'sauApp') => m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
+        //   name: "sauApp",
+        //   chunks: "all",
+        // },
+        // celebratesStyles: {
+        //   name: 'celebrates',
+        //   test: (m,c,entry = 'celebrates') => m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
+        //   chunks: 'all',          
+        // },
+        // celebratesStyles: {
+        //   name: 'celebrates',
+        //   test: (m,c,entry = 'celebrates') => m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
+        //   chunks: 'all',
+        //   enforce: true
+        // },
+        // libraryStyles: {
+        //   name: 'celebrates',
+        //   test: (m,c,entry = 'library') => m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
+        //   chunks: 'all',
+        //   enforce: true
+        // },
+        // registerStyles: {
+        //   name: 'register',
+        //   test: (m,c,entry = 'register') => m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
+        //   chunks: 'all',
+        //   enforce: true
+        // },
+       }
+    }
+  }, 
   plugins: [
+    new VueLoaderPlugin(),
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: "[name].css",
+    }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'src/pages/index.html',
       inject: true,
-      chunks: ['vendor','app'],
+      chunks: ['vendor','sauApp'],
       chunksSortMode: 'manual'
     }),
-    new HtmlWebpackPlugin({
-      filename: 'register.html',
-      template: 'src/pages/register.html',
-      inject: true,     
-      chunks: ['vendor','register','app'], 
-      chunksSortMode: 'manual'
-    }),
-    new HtmlWebpackPlugin({
-      filename: 'library.html',
-      template: 'src/pages/library.html',
-      inject: true,     
-      chunks: ['vendor','library','app'], 
-      chunksSortMode: 'manual'
-    }),
+    // new HtmlWebpackPlugin({
+    //   filename: 'register.html',
+    //   template: 'src/pages/register.html',
+    //   inject: true,     
+    //   chunks: ['vendor','register','sauapp'], 
+    //   chunksSortMode: 'manual'
+    // }),
+    // new HtmlWebpackPlugin({
+    //   filename: 'library.html',
+    //   template: 'src/pages/library.html',
+    //   inject: true,     
+    //   chunks: ['vendor','library','sauapp'], 
+    //   chunksSortMode: 'manual'
+    // }),
     new HtmlWebpackPlugin({
       filename: 'celebrates.html',
       template: 'src/pages/celebrates.html',
       inject: true,     
-      chunks: ['vendor','celebrates','app'], 
+      chunks: ['sauBase','celebrates','sauApp'], 
       chunksSortMode: 'manual'
     }),
   ],
   module: {
 
     rules: [
-      ...(config.dev.useEslint ? [createLintingRule()] : []),
+      ...(config.dev.useEslint ? [createLintingRule()] : []),      
+      {
+        test: /\.(sa|sc|c)ss$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'postcss-loader',
+          'sass-loader',
+        ],
+      },      
       {
         test: /\.vue$/,
         loader: 'vue-loader',

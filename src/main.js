@@ -11,7 +11,8 @@ Vue.config.productionTip = false;
 
 UIkit.use(Icons);
 
-/* eslint-disable no-new */
-new Vue({
+let sauVM = new Vue({
   el: '#app',
 });
+
+window.sauVM = sauVM;
