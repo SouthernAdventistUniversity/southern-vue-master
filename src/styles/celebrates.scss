@@ -1,12 +1,12 @@
 @import 'site';
 
 .title-card {
-    padding: 22vh 0;   
-    
+    padding: 22vh 0;
+
 
     h1 {
-        margin: 0 auto;    
-        text-transform: uppercase;             
+        margin: 0 auto;
+        text-transform: uppercase;
 
         strong {
             font-size: 4rem;
@@ -16,14 +16,14 @@
         }
 
         em {
-            font-size: 4rem;   
+            font-size: 4rem;
             font-weight: 700;
             color: $black;
             font-style: normal;
             display: inline-block;
             background-color: $white;
             padding: .25em;
-            line-height: 4rem;            
+            line-height: 4rem;
             text-align: left;
 
             br {
@@ -45,7 +45,7 @@
         font-size: 1.5rem;
         font-weight: 600;
         text-transform: uppercase;
-    }    
+    }
 }
 
 .slider-content {
@@ -62,7 +62,7 @@
             figure {
                 margin: 0;
 
-                span {              
+                span {
                     display: block;
                     width: 100%;
                     position: absolute;
@@ -70,12 +70,21 @@
                     top: 50%;
                     left: 50%;
                     transform: translate(-50%,-50%);
+                    padding-top: 100%;
                 }
 
                 img {
                     transition: all 200ms ease-in-out;
                     filter: grayscale(100%) brightness(100%) contrast(1.1);
                     opacity: 0.85;
+                    max-width: 150%;
+                    max-height: 150%;
+                    min-width: 100%;
+                    min-height: 100%;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%,-50%);
                 }
 
                 figcaption {
@@ -95,7 +104,16 @@
                     align-items: center;
                     text-shadow: 0 1px 1px rgba(0,0,0,.7);
                 }
-            }            
+            }
+
+            &:hover {
+              figure {
+                img {
+                  transform: translate(-50%,-50%) scale(1.1);
+                  filter: grayscale(0) brightness(100%) contrast(1);
+                }
+              }
+            }
         }
     }
 
@@ -113,13 +131,13 @@
 
         &:hover {
             background: transparent;
-        }                       
-        
+        }
+
         &:before {
             content: "";
             display: block;
             width: 100%;
-            height: 100%;            
+            height: 100%;
             background-repeat: no-repeat;
             background-size: 2rem 2rem;
             background-position: center;
@@ -148,7 +166,7 @@
 
         &.previous {
             &:before {
-                margin-left: -.5em;                
+                margin-left: -.5em;
                 transform: translate(-50%, -50%) rotate(180deg);
             }
         }
@@ -170,7 +188,7 @@
 
 .side-titles {
     width: 100%;
-    background-color: $lime;     
+    background-color: $lime;
     background-image: url(../assets/topo-white.svg);
     background-repeat: none;
     background-size: cover;
@@ -180,18 +198,18 @@
     width: 100%;
 }
 
-@media screen and (min-width: $breakpoint-medium) { 
+@media screen and (min-width: $breakpoint-medium) {
     body {
         padding-top: 96px;
     }
-    
+
     .side-titles {
         position: fixed;
         width: 36vw !important;
     }
 
     .flickity-slider > * {
-        min-width: auto;        
+        min-width: auto;
     }
 
     .title-card {
@@ -210,7 +228,7 @@
                 font-size: 5vw;
                 padding: 1vw 2vw;
                 line-height: 5vw;
-                
+
                 br {
                     display: block;
                 }
@@ -231,14 +249,14 @@
             display: block !important;
             width: 3rem;
             height: 3rem;
-            
+
             position: absolute;
             top: -2.0rem;
-            left: 50%;        
+            left: 50%;
             transform: rotate(45deg) translateX(-50%) translateY(50%);
 
             background-color: $lime;
-            
+
         }
     }
 
@@ -253,7 +271,7 @@
                 left: 1%;
             }
 
-            &.next {                
+            &.next {
                 right: 65.5%;
             }
         }
@@ -266,14 +284,14 @@
     }
 }
 
-@media screen and (min-width: $breakpoint-large) {    
+@media screen and (min-width: $breakpoint-large) {
 
     .secondary-card {
         h2 {
             font-size: 2.5rem;
         }
-    }  
-    
+    }
 
-    
+
+
 }
